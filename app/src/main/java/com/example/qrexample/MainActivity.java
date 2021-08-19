@@ -3,6 +3,7 @@ package com.example.qrexample;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity{
     EditText et, pt;
     private int point = 1000;
     private int bonus = 1000; // switch 나 if로 거리마다 보너스 세팅할 것
-    Button bt, reScan;
+    Button bt, reScan, pointCheck;
     IntentIntegrator integrator;
 
 
@@ -44,11 +45,14 @@ public class MainActivity extends AppCompatActivity{
         wv = findViewById(R.id.wv);
         bt = findViewById(R.id.bt);
         reScan = findViewById(R.id.reScan);
+        pointCheck = findViewById(R.id.pointCheck);
 
         WebSettings webSettings = wv.getSettings();
 
-        // point 조회 가능
+        // point 조회 가능 및 키보드 없애기 및 텍스트 오른쪽 정렬
         pt.setText(printInfo());
+        pt.setShowSoftInputOnFocus(false);
+        pt.setGravity(Gravity.CENTER);
 
 
         //자바 스크립트 사용을 할 수 있도록 합니다.
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity{
                     imm.hideSoftInputFromWindow(v.getWindowToken(),0);
                     return true;
                 }
+                // 같은 바코드를 여러번 찍는 경우에 대해서는 어떻게 대처할 것인 지 구현 못한 상태
                 return false;
             }
         });
@@ -109,6 +114,10 @@ public class MainActivity extends AppCompatActivity{
         integrator.initiateScan();
     }
 
+    public void pointCheck(View view){
+        pointCheck.setText(getPoint() + "원");
+    }
+
     @Override
     public void onBackPressed() {
         if(wv.isActivated()){
@@ -134,7 +143,7 @@ public class MainActivity extends AppCompatActivity{
 
         if(result != null){
             if(result.getContents() == null){
-
+                
             }else{
                 //qr코드를 읽어서 EditText에 입력해줍니다.
                 et.setText(result.getContents());
@@ -165,7 +174,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public String printInfo(){
-        return "현재 Point : " + (getPoint() + getBonus()) + "원" +  "  적립된 Point : " + getBonus() + "원";
+        return "적립된 Point : " + getBonus() + "원";
     }
 
     public int getBonus() {
