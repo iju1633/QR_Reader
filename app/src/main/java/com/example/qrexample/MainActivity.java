@@ -26,8 +26,10 @@ import com.journeyapps.barcodescanner.CaptureActivity;
 public class MainActivity extends AppCompatActivity{
 
     WebView wv;
-    EditText et;
-    Button bt;
+    EditText et, pt;
+    private int point = 1000;
+    private int bonus = 1000; // switch 나 if로 거리마다 보너스 세팅할 것
+    Button bt, reScan;
     IntentIntegrator integrator;
 
 
@@ -38,9 +40,16 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         et = findViewById(R.id.et);
+        pt = findViewById(R.id.pt);
         wv = findViewById(R.id.wv);
         bt = findViewById(R.id.bt);
+        reScan = findViewById(R.id.reScan);
+
         WebSettings webSettings = wv.getSettings();
+
+        // point 조회 가능
+        pt.setText(printInfo());
+
 
         //자바 스크립트 사용을 할 수 있도록 합니다.
         webSettings.setJavaScriptEnabled(true);
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity{
 
         //스캐너 시작 메소드
         integrator.initiateScan();
+        
     }
 
     public void onClick(View view){
@@ -93,6 +103,10 @@ public class MainActivity extends AppCompatActivity{
         }
 
         wv.loadUrl(address);
+    }
+
+    public void reScan(View view){
+        integrator.initiateScan();
     }
 
     @Override
@@ -124,6 +138,7 @@ public class MainActivity extends AppCompatActivity{
             }else{
                 //qr코드를 읽어서 EditText에 입력해줍니다.
                 et.setText(result.getContents());
+                addPoint();
 
                 //Button의 onclick호출
                 bt.callOnClick();
@@ -134,6 +149,31 @@ public class MainActivity extends AppCompatActivity{
             super.onActivityResult(requestCode, resultCode, data);
         }
 
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    // 적립될 포인트
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
+    public void addPoint() {
+        this.point += getBonus();
+    }
+
+    public String printInfo(){
+        return "현재 Point : " + (getPoint() + getBonus()) + "원" +  "  적립된 Point : " + getBonus() + "원";
+    }
+
+    public int getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(int bonus) {
+        this.bonus = bonus;
     }
 }
 
