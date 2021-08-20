@@ -30,10 +30,12 @@ public class MainActivity extends AppCompatActivity{
     EditText et, pt;
     private int point = 1000;// 기본 포인트
     private int bonus = 1000; // switch 나 if로 거리마다 보너스 세팅할 것
-    Button bt, reScan, pointCheck;
+    Button bt, reScan, pointCheck, usePoint;
     IntentIntegrator integrator;
+    String checkAddress; // qr을 새로 찍었을 떄 같은 건지 다른 건지 확인할 때 필요한 변수
 
-
+    // 리츠 투자 상품 목록을 알려줄 url
+    String REITsURL = "http://reits.molit.go.kr/svc/svc/openPage.do?pageId=020302";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +48,16 @@ public class MainActivity extends AppCompatActivity{
         bt = findViewById(R.id.bt); // 이 버튼이 어떤 버튼인 지 아직 이해가 잘 안감
         reScan = findViewById(R.id.reScan); // 다시 스캔하기 버튼
         pointCheck = findViewById(R.id.pointCheck); // 포인트 조회 버튼
+        usePoint = findViewById(R.id.usePoint); // 리츠 투자 상품 목록으로 이어지는 버튼
 
         WebSettings webSettings = wv.getSettings();
 
         // point 조회 가능 및 키보드 없애기 및 텍스트 오른쪽 정렬
         pt.setText(printInfo());
         pt.setShowSoftInputOnFocus(false);
-        pt.setGravity(Gravity.CENTER);
+        // pt.setGravity(Gravity.CENTER);
+
+
 
         // 스캔 완료 후 url수정 방지를 위한 키보드 숨기기
         et.setShowSoftInputOnFocus(false);
@@ -92,7 +97,7 @@ public class MainActivity extends AppCompatActivity{
         integrator.setPrompt("QR 코드를 사각형 안에 위치 시켜주세요");
 
         //QR 코드 인식 시에 삐- 소리가 나게 할것인지 여부
-        integrator.setBeepEnabled(false);
+        integrator.setBeepEnabled(true);
 
         integrator.setBarcodeImageEnabled(true);
 
@@ -111,6 +116,10 @@ public class MainActivity extends AppCompatActivity{
         }
 
         wv.loadUrl(address);
+
+        // 기존의 url을 알려주는 부분에 포인트 사용을 위한 힌트 구문 제시
+        et.setText("포인트를 리츠에 투자해보세요!");
+        et.setGravity(Gravity.CENTER);
     }
 
     public void reScan(View view){
@@ -119,6 +128,11 @@ public class MainActivity extends AppCompatActivity{
 
     public void pointCheck(View view){
         pointCheck.setText(getPoint() + "원");
+    }
+
+    public void usePoint(View view){
+        // 리츠 투자 상품 url로 view를 전환
+        wv.loadUrl(REITsURL);
     }
 
     @Override
@@ -148,7 +162,8 @@ public class MainActivity extends AppCompatActivity{
             }else{
                 //qr코드를 읽어서 EditText에 입력해줍니다.
                 et.setText(result.getContents());
-                addPoint();
+                addPoint(); // 같은 바코드를 찍으면 point가 올라가면 안돼!
+                pointCheck.setText("My 포인트 조회");
 
                 //Button의 onclick호출
                 bt.callOnClick();
@@ -176,7 +191,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public String printInfo(){
-        return "적립된 Point : " + getBonus() + "원";
+        return "  적립된 Point : " + getBonus() + "원";
     }
 
     public int getBonus() {
