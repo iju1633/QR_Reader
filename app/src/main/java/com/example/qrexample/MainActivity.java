@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity{
 
     WebView wv;
     EditText et, pt;
-    private int point = 1000;
+    private int point = 1000;// 기본 포인트
     private int bonus = 1000; // switch 나 if로 거리마다 보너스 세팅할 것
     Button bt, reScan, pointCheck;
     IntentIntegrator integrator;
@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        et = findViewById(R.id.et);
-        pt = findViewById(R.id.pt);
-        wv = findViewById(R.id.wv);
-        bt = findViewById(R.id.bt);
-        reScan = findViewById(R.id.reScan);
-        pointCheck = findViewById(R.id.pointCheck);
+        et = findViewById(R.id.et); // url보여주는 textfield
+        pt = findViewById(R.id.pt); // 포인트
+        wv = findViewById(R.id.wv); // web view
+        bt = findViewById(R.id.bt); // 이 버튼이 어떤 버튼인 지 아직 이해가 잘 안감
+        reScan = findViewById(R.id.reScan); // 다시 스캔하기 버튼
+        pointCheck = findViewById(R.id.pointCheck); // 포인트 조회 버튼
 
         WebSettings webSettings = wv.getSettings();
 
@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity{
         pt.setText(printInfo());
         pt.setShowSoftInputOnFocus(false);
         pt.setGravity(Gravity.CENTER);
+
+        // 스캔 완료 후 url수정 방지를 위한 키보드 숨기기
+        et.setShowSoftInputOnFocus(false);
 
 
         //자바 스크립트 사용을 할 수 있도록 합니다.
@@ -131,8 +134,6 @@ public class MainActivity extends AppCompatActivity{
         }else{
             super.onBackPressed();
         }
-
-
     }
 
 
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity{
         }
 
     }
+    // field 값들은 쉽게 바뀌면 안되니 private으로 선언
 
     public int getPoint() {
         return point;
